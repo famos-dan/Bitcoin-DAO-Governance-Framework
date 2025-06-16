@@ -341,3 +341,53 @@
     proposal-id: uint
   }
 )
+
+(define-data-var next-fund-id uint u0)
+(define-data-var community-treasury-balance uint u0)
+
+;; Multi-signature Transaction System
+(define-map multisig-transactions
+  {
+    transaction-id: uint
+  }
+  {
+    creator: principal,
+    contract-to-call: principal,
+    function-to-call: (string-ascii 128),
+    function-args: (list 10 (buff 256)),
+    required-signatures: uint,
+    signers: (list 10 principal),
+    executed: bool,
+    created-at-block: uint,
+    expiration-block: uint
+  }
+)
+
+(define-data-var next-transaction-id uint u0)
+
+;; Reputation and Governance Tiers
+(define-map governance-tiers
+  {
+    tier-level: uint
+  }
+  {
+    name: (string-ascii 50),
+    min-reputation: uint,
+    voting-power-multiplier: uint,
+    proposal-discount: uint,
+    special-rights: (list 5 (string-ascii 50))
+  }
+)
+
+;; Protocol Cooldown System
+(define-map protocol-actions
+  {
+    action-type: (string-ascii 50)
+  }
+  {
+    last-executed: uint,
+    cooldown-period: uint,
+    calls-in-period: uint,
+    max-calls-in-period: uint
+  }
+)

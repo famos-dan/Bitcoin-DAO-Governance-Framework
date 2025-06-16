@@ -46,3 +46,58 @@
     timelock-expiration: uint
   }
 )
+
+;; Enhanced Voter Profile with Advanced Features
+(define-map voter-profiles
+  {
+    voter: principal
+  }
+  {
+    base-voting-power: uint,
+    delegated-voting-power: uint,
+    delegated-to: (optional principal),
+    total-delegated-from: (list 10 principal),
+    last-voting-block: uint,
+    reputation-score: uint,
+    slashing-points: uint,
+    vote-history: (list 20 { 
+      proposal-id: uint, 
+      vote-direction: bool, 
+      voting-power: uint 
+    }),
+    specialized-voting-weights: (list 5 { 
+      category: (string-ascii 50), 
+      weight-multiplier: uint 
+    })
+  }
+)
+
+;; Treasury Management
+(define-map treasury-accounts
+  {
+    account: principal
+  }
+  {
+    balance: uint,
+    allowed-categories: (list 5 (string-ascii 50)),
+    last-withdrawal-block: uint
+  }
+)
+
+;; Advanced Voting and Delegation Mechanisms
+(define-map proposal-votes
+  {
+    proposal-id: uint,
+    voter: principal
+  }
+  {
+    vote-power: uint,
+    vote-direction: bool,
+    voted-at-block: uint,
+    quadratic-weight: uint,
+    specialized-category-votes: (list 5 { 
+      category: (string-ascii 50), 
+      vote-weight: uint 
+    })
+  }
+)

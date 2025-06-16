@@ -101,3 +101,56 @@
     })
   }
 )
+
+;; Governance Parameters Management
+(define-map governance-parameters
+  {
+    param-name: (string-ascii 50)
+  }
+  {
+    value: uint,
+    last-updated-block: uint,
+    update-cooldown: uint
+  }
+)
+
+;; Contract Upgrade Mechanism
+(define-map contract-upgrades
+  {
+    upgrade-id: uint
+  }
+  {
+    new-contract-address: principal,
+    proposed-by: principal,
+    upgrade-block: uint,
+    approved: bool,
+    implementation-details: (optional (string-ascii 500))
+  }
+)
+
+;; Emergency and Governance Controls
+(define-data-var emergency-stop-activated bool false)
+(define-data-var governance-pause-threshold uint u3)
+(define-data-var total-governance-tokens uint u0)
+(define-data-var next-proposal-id uint u0)
+(define-data-var next-upgrade-id uint u0)
+
+;; Treasury Management System
+(define-public (create-treasury-account
+  (initial-balance uint)
+  (allowed-categories (list 5 (string-ascii 50)))
+)
+  (begin
+    (asserts! (not (var-get emergency-stop-activated)) ERR_EMERGENCY_STOP)
+    
+    (map-set treasury-accounts 
+      { account: tx-sender }
+      {
+        balance: initial-balance,
+        allowed-categories: allowed-categories,
+        last-withdrawal-block: stacks-block-height
+      }
+    )
+    
+    (ok true)
+  ))

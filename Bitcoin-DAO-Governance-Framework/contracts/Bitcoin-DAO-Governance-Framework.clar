@@ -252,3 +252,92 @@
     (ok true)
   )
 )
+
+
+;; Initialize Governance Parameters
+(map-set governance-parameters 
+  { param-name: "min-proposal-voting-power" }
+  { 
+    value: u100, 
+    last-updated-block: u0, 
+    update-cooldown: u1440 
+  }
+)
+
+(map-set governance-parameters 
+  { param-name: "proposal-creation-delay" }
+  { 
+    value: u144, 
+    last-updated-block: u0, 
+    update-cooldown: u1440 
+  }
+)
+
+;; Initial Configuration for Contract Owner
+(map-set voter-profiles 
+  { voter: CONTRACT_OWNER }
+  {
+    base-voting-power: u10000,
+    delegated-voting-power: u0,
+    delegated-to: none,
+    total-delegated-from: (list),
+    last-voting-block: u0,
+    reputation-score: u100,
+    slashing-points: u0,
+    vote-history: (list),
+    specialized-voting-weights: (list)
+  }
+)
+
+(define-constant ERR_ALREADY_VOTED (err u12))
+(define-constant ERR_ZERO_VOTE_POWER (err u13))
+(define-constant ERR_PROPOSAL_THRESHOLD_NOT_MET (err u14))
+(define-constant ERR_PROTOCOL_COOLDOWN (err u15))
+(define-constant ERR_INVALID_VETO (err u16))
+(define-constant ERR_CANCELLATION_WINDOW_CLOSED (err u17))
+(define-constant ERR_INVALID_TRANSACTION (err u18))
+(define-constant ERR_NOT_ACTIVE_MEMBER (err u19))
+(define-constant ERR_STAKING_PERIOD_ACTIVE (err u20))
+
+(define-constant PROPOSAL_TYPE_MULTISIG u4)
+(define-constant PROPOSAL_TYPE_COMMUNITY_FUND u5)
+(define-constant PROPOSAL_TYPE_PROTOCOL_UPGRADE u6)
+
+;; Staking and Rewards System
+(define-map staking-positions
+  {
+    staker: principal
+  }
+  {
+    amount: uint,
+    locked-until-block: uint,
+    reward-multiplier: uint,
+    auto-compound: bool,
+    unclaimed-rewards: uint,
+    last-claim-block: uint
+  }
+)
+
+(define-data-var staking-rewards-rate uint u5) ;; 5 basis points per block
+(define-data-var staking-rewards-pool uint u0)
+
+;; Community Treasury and Grants
+(define-map community-fund-proposals
+  {
+    fund-id: uint
+  }
+  {
+    applicant: principal,
+    requested-amount: uint,
+    category: (string-ascii 50),
+    milestones: (list 5 {
+      description: (string-ascii 100),
+      amount: uint,
+      completed: bool
+    }),
+    approved: bool,
+    votes-needed: uint,
+    votes-received: uint,
+    proposal-id: uint
+  }
+)
